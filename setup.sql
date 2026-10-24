@@ -1,0 +1,30 @@
+-- FallGuard: Snowflake setup
+CREATE DATABASE IF NOT EXISTS FALLGUARD;
+CREATE SCHEMA IF NOT EXISTS FALLGUARD.APP;
+
+CREATE OR REPLACE TABLE FALLGUARD.APP.ACTIVITY_LOG (
+  TS TIMESTAMP_NTZ,
+  ROOM STRING,
+  ACTIVITY STRING,
+  CONFIDENCE FLOAT,
+  IS_FALL INT
+);
+
+CREATE OR REPLACE TABLE FALLGUARD.APP.ESCALATIONS (
+  CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+  FALL_TS TIMESTAMP_NTZ,
+  TARGET STRING,
+  REASON STRING,
+  MODE STRING
+);
+
+-- Email alerts (recipient must be a verified user email on the account)
+CREATE OR REPLACE NOTIFICATION INTEGRATION fallguard_email
+  TYPE = EMAIL
+  ENABLED = TRUE
+  ALLOWED_RECIPIENTS = ('caregiver@example.com');
+
+-- Load the activity log: run `python3 to_sql.py` and execute its output here.
+
+-- Sanity check for Snowflake AI
+SELECT AI_COMPLETE('llama3.1-70b', 'Say hello in 5 words');
